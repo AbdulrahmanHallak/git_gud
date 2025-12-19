@@ -1,0 +1,1316 @@
+openapi: 3.0.3
+info:
+  title: Workout Tracker API
+  description: API for managing workout plans, tracking exercises, and monitoring fitness progress
+  version: 1.0.0
+  contact:
+    name: API Support
+servers:
+  - url: https://api.example.com
+    description: Production server
+  - url: https://staging-api.example.com
+    description: Staging server
+
+tags:
+  - name: Authentication
+    description: User authentication and token management
+  - name: Users
+    description: User profile management
+  - name: Workout Plans
+    description: Workout plan generation and management
+  - name: Workout Sessions
+    description: Exercise tracking and logging
+  - name: Exercise History
+    description: Exercise history and progress tracking
+  - name: Exercise Catalog
+    description: Browse and search exercises
+  - name: Split Types
+    description: Workout split type information
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                  example: johndoe
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate a user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePass123!
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user and invalidate refresh token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      responses:
+        '204':
+          description: Successfully logged out
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  example: 123
+                height:
+                  type: number
+                  format: float
+                  example: 175.5
+                  description: Height in centimeters
+                weight:
+                  type: number
+                  format: float
+                  example: 75.5
+                  description: Weight in kilograms
+                bodyFat:
+                  type: number
+                  format: float
+                  example: 15.5
+                  description: Body fat percentage
+                splitType:
+                  type: string
+                  example: push-pull-legs
+                workoutType:
+                  type: string
+                  enum: [calisthenics, gym]
+                  example: gym
+                daysPerWeek:
+                  type: integer
+                  minimum: 1
+                  maximum: 7
+                  example: 4
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{userId}/plans:
+    get:
+      tags:
+        - Workout Plans
+      summary: Get user's workout plans
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, completed, archived]
+          example: active
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          example: 10
+      responses:
+        '200':
+          description: Workout plans retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlansList'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Workout Plans
+      summary: Create a new workout plan
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - split
+                - workoutType
+                - daysPerWeek
+                - weeks
+                - startDate
+              properties:
+                split:
+                  type: string
+                  example: push-pull-legs
+                workoutType:
+                  type: string
+                  enum: [calisthenics, gym]
+                  example: gym
+                daysPerWeek:
+                  type: integer
+                  minimum: 1
+                  maximum: 7
+                  example: 4
+                weeks:
+                  type: integer
+                  minimum: 1
+                  example: 12
+                startDate:
+                  type: string
+                  format: date
+                  example: '2025-01-01'
+      responses:
+        '201':
+          description: Workout plan created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanSummary'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{userId}/plans/{planId}:
+    get:
+      tags:
+        - Workout Plans
+      summary: Get detailed workout plan
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: planId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: plan_abc123
+      responses:
+        '200':
+          description: Workout plan retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanDetail'
+        '404':
+          description: Plan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      tags:
+        - Workout Plans
+      summary: Delete a workout plan
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: planId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: plan_abc123
+      responses:
+        '204':
+          description: Plan deleted successfully
+        '404':
+          description: Plan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{userId}/plans/{planId}/exercises/{exerciseId}:
+    patch:
+      tags:
+        - Workout Sessions
+      summary: Log exercise sets
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: planId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: plan_abc123
+        - name: exerciseId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ex_bench123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - sets
+              properties:
+                sets:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - setNumber
+                      - weight
+                      - reps
+                    properties:
+                      setNumber:
+                        type: integer
+                        example: 1
+                      weight:
+                        type: number
+                        format: float
+                        example: 80.5
+                      reps:
+                        type: integer
+                        example: 10
+      responses:
+        '200':
+          description: Exercise logged successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseLog'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Exercise not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{userId}/exercises/{exerciseId}/history:
+    get:
+      tags:
+        - Exercise History
+      summary: Get exercise history
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: exerciseId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ex_bench123
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          example: 10
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          example: '2025-01-01'
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          example: '2025-12-31'
+      responses:
+        '200':
+          description: Exercise history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseHistory'
+        '404':
+          description: Exercise not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{userId}/exercises/{exerciseId}/progress:
+    get:
+      tags:
+        - Exercise History
+      summary: Get exercise progress statistics
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: exerciseId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ex_bench123
+      responses:
+        '200':
+          description: Exercise progress retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseProgress'
+        '404':
+          description: Exercise not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/exercises:
+    get:
+      tags:
+        - Exercise Catalog
+      summary: Search and browse exercises
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [strength, cardio, flexibility, balance]
+          example: strength
+        - name: targetMuscle
+          in: query
+          schema:
+            type: string
+          example: chest
+        - name: equipment
+          in: query
+          schema:
+            type: string
+          example: barbell
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+          example: intermediate
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+          example: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+          example: bench press
+      responses:
+        '200':
+          description: Exercises retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseList'
+
+  /api/v1/exercises/{exerciseId}:
+    get:
+      tags:
+        - Exercise Catalog
+      summary: Get detailed exercise information
+      parameters:
+        - name: exerciseId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ex_bench123
+      responses:
+        '200':
+          description: Exercise details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExerciseDetail'
+        '404':
+          description: Exercise not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/admin/exercises/{exerciseId}:
+    delete:
+      tags:
+        - Exercise Catalog
+      summary: Delete an exercise (Admin only)
+      parameters:
+        - name: exerciseId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ex_bench123
+      responses:
+        '204':
+          description: Exercise deleted successfully
+        '403':
+          description: Forbidden - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Exercise not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/splits:
+    get:
+      tags:
+        - Split Types
+      summary: Get all workout split types
+      responses:
+        '200':
+          description: Split types retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  splits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SplitSummary'
+
+  /api/v1/splits/{splitId}:
+    get:
+      tags:
+        - Split Types
+      summary: Get detailed split type information
+      parameters:
+        - name: splitId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: split_ppl123
+      responses:
+        '200':
+          description: Split details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SplitDetail'
+        '404':
+          description: Split not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Invalid credentials
+        message:
+          type: string
+          example: The provided email or password is incorrect
+        code:
+          type: string
+          example: AUTH_ERROR
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: user_abc123
+            username:
+              type: string
+              example: johndoe
+            email:
+              type: string
+              example: john@example.com
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        validUntil:
+          type: string
+          format: date-time
+          example: '2025-12-20T10:30:00Z'
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        validUntil:
+          type: string
+          format: date-time
+          example: '2025-12-20T10:30:00Z'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        username:
+          type: string
+          example: johndoe
+        email:
+          type: string
+          example: john@example.com
+        height:
+          type: number
+          format: float
+          example: 175.5
+        weight:
+          type: number
+          format: float
+          example: 75.5
+        bodyFat:
+          type: number
+          format: float
+          example: 15.5
+        splitType:
+          type: string
+          example: push-pull-legs
+        workoutType:
+          type: string
+          example: gym
+        daysPerWeek:
+          type: integer
+          example: 4
+        role:
+          type: string
+          example: user
+        createdAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T08:00:00Z'
+
+    UserUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        email:
+          type: string
+          example: john@example.com
+        height:
+          type: number
+          format: float
+          example: 175.5
+        weight:
+          type: number
+          format: float
+          example: 75.5
+        bodyFat:
+          type: number
+          format: float
+          example: 15.5
+        splitType:
+          type: string
+          example: push-pull-legs
+        workoutType:
+          type: string
+          example: gym
+        daysPerWeek:
+          type: integer
+          example: 4
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2025-12-19T14:30:00Z'
+
+    PlanSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          example: plan_abc123
+        userId:
+          type: string
+          example: user_abc123
+        splitType:
+          type: string
+          example: push-pull-legs
+        workoutType:
+          type: string
+          example: gym
+        daysPerWeek:
+          type: integer
+          example: 4
+        status:
+          type: string
+          enum: [active, completed, archived]
+          example: active
+
+    PlansList:
+      type: object
+      properties:
+        plans:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: plan_abc123
+              splitType:
+                type: string
+                example: push-pull-legs
+              workoutType:
+                type: string
+                example: gym
+              daysPerWeek:
+                type: integer
+                example: 4
+              startDate:
+                type: string
+                format: date
+                example: '2025-01-01'
+              endDate:
+                type: string
+                format: date
+                example: '2025-03-31'
+              status:
+                type: string
+                example: active
+              createdAt:
+                type: string
+                format: date-time
+                example: '2025-01-01T00:00:00Z'
+              logs:
+                type: array
+                items:
+                  type: object
+                  description: Sets and exercise log data
+        total:
+          type: integer
+          example: 5
+
+    PlanDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          example: plan_abc123
+        userId:
+          type: string
+          example: user_abc123
+        splitType:
+          type: string
+          example: push-pull-legs
+        workoutType:
+          type: string
+          example: gym
+        daysPerWeek:
+          type: integer
+          example: 4
+        startDate:
+          type: string
+          format: date
+          example: '2025-01-01'
+        endDate:
+          type: string
+          format: date
+          example: '2025-03-31'
+        status:
+          type: string
+          example: active
+        planForWeek:
+          type: object
+          properties:
+            days:
+              type: array
+              items:
+                type: object
+                properties:
+                  dayNumber:
+                    type: integer
+                    example: 1
+                  dayOfWeek:
+                    type: string
+                    example: Monday
+                  exercises:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: planex_123
+                        exerciseId:
+                          type: string
+                          example: ex_bench123
+                        name:
+                          type: string
+                          example: Bench Press
+                        sets:
+                          type: integer
+                          example: 4
+                        reps:
+                          type: string
+                          example: 8-10
+                        order:
+                          type: integer
+                          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+
+    ExerciseLog:
+      type: object
+      properties:
+        id:
+          type: string
+          example: planex_123
+        exerciseId:
+          type: string
+          example: ex_bench123
+        name:
+          type: string
+          example: Bench Press
+        status:
+          type: string
+          enum: [pending, in-progress, completed]
+          example: completed
+        sets:
+          type: array
+          items:
+            type: object
+            properties:
+              setNumber:
+                type: integer
+                example: 1
+              weight:
+                type: number
+                format: float
+                example: 80.5
+              reps:
+                type: integer
+                example: 10
+              completedAt:
+                type: string
+                format: date-time
+                example: '2025-12-19T15:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2025-12-19T15:45:00Z'
+
+    ExerciseHistory:
+      type: object
+      properties:
+        exerciseId:
+          type: string
+          example: ex_bench123
+        exerciseName:
+          type: string
+          example: Bench Press
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date-time
+                example: '2025-12-19T15:30:00Z'
+              sets:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    setNumber:
+                      type: integer
+                      example: 1
+                    weight:
+                      type: number
+                      format: float
+                      example: 80.5
+                    reps:
+                      type: integer
+                      example: 10
+              maxWeight:
+                type: number
+                format: float
+                example: 85.0
+        total:
+          type: integer
+          example: 45
+
+    ExerciseProgress:
+      type: object
+      properties:
+        exerciseId:
+          type: string
+          example: ex_bench123
+        exerciseName:
+          type: string
+          example: Bench Press
+        firstRecorded:
+          type: string
+          format: date
+          example: '2025-01-01'
+        lastRecorded:
+          type: string
+          format: date
+          example: '2025-12-19'
+        totalSessions:
+          type: integer
+          example: 48
+        progression:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+                example: '2025-12-19'
+              maxWeight:
+                type: number
+                format: float
+                example: 85.0
+              avgWeight:
+                type: number
+                format: float
+                example: 77.5
+              totalVolume:
+                type: number
+                format: float
+                example: 3100.0
+                description: Total weight lifted (weight × reps)
+              avgReps:
+                type: number
+                format: float
+                example: 9.5
+        personalRecords:
+          type: object
+          properties:
+            maxWeight:
+              type: number
+              format: float
+              example: 90.0
+            maxVolume:
+              type: number
+              format: float
+              example: 3600.0
+            maxReps:
+              type: integer
+              example: 12
+
+    ExerciseList:
+      type: object
+      properties:
+        exercises:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: ex_bench123
+              imageUrl:
+                type: string
+                format: uri
+                example: https://example.com/exercises/bench-press.jpg
+              name:
+                type: string
+                example: Bench Press
+              type:
+                type: string
+                example: strength
+              targetMuscles:
+                type: array
+                items:
+                  type: string
+                example: [chest, triceps, shoulders]
+              maxWeight:
+                type: number
+                format: float
+                example: 90.0
+                description: User's max weight if they've performed this exercise
+        total:
+          type: integer
+          example: 150
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+
+    ExerciseDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ex_bench123
+        name:
+          type: string
+          example: Bench Press
+        type:
+          type: string
+          example: strength
+        targetMuscle:
+          type: string
+          example: chest
+        equipment:
+          type: string
+          example: barbell
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: intermediate
+        description:
+          type: string
+          example: A compound upper body exercise that primarily targets the chest muscles
+        instructions:
+          type: array
+          items:
+            type: string
+          example:
+            - Lie flat on the bench with feet firmly on the ground
+            - Grip the bar slightly wider than shoulder width
+            - Lower the bar to your chest with control
+            - Press the bar back up explosively
+        videoUrl:
+          type: string
+          format: uri
+          example: https://example.com/videos/bench-press.mp4
+        imageUrl:
+          type: string
+          format: uri
+          example: https://example.com/exercises/bench-press.jpg
+        tips:
+          type: array
+          items:
+            type: string
+          example:
+            - Keep your shoulder blades retracted
+            - Maintain a slight arch in your lower back
+            - Don't bounce the bar off your chest
+
+    SplitSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          example: split_ppl123
+        name:
+          type: string
+          example: Push Pull Legs
+        code:
+          type: string
+          example: push-pull-legs
+        description:
+          type: string
+          example: A 3-day split dividing workouts into push, pull, and leg days
+        recommendedDaysPerWeek:
+          type: integer
+          example: 6
+        trainingStyle:
+          type: string
+          example: hypertrophy
+
+    SplitDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          example: split_ppl123
+        name:
+          type: string
+          example: Push Pull Legs
+        code:
+          type: string
+          example: push-pull-legs
+        description:
+          type: string
+          example: A 3-day split dividing workouts into push, pull, and leg days
+        recommendedDaysPerWeek:
+          type: integer
+          example: 6
+        trainingStyle:
+          type: string
+          example: hypertrophy
+        dayBreakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              day:
+                type: integer
+                example: 1
+              focus:
+                type: string
+                example: Push
+              muscleGroups:
+                type: array
+                items:
+                  type: string
+                example: [chest, shoulders, triceps]

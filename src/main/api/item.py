@@ -2,7 +2,7 @@
 from typing import List
 
 from fastapi import APIRouter
-from main.schema import Item
+from src.main.schema import Item
 
 router = APIRouter(tags=["Item"])
 

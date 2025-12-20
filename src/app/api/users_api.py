@@ -4,7 +4,7 @@ from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
 
-from openapi_server.apis.users_api_base import BaseUsersApi
+from users_api_base import BaseUsersApi
 import openapi_server.impl
 
 from fastapi import (  # noqa: F401
@@ -22,13 +22,13 @@ from fastapi import (  # noqa: F401
     status,
 )
 
-from openapi_server.models.extra_models import TokenModel  # noqa: F401
+from src.app.schema.extra_models import TokenModel  # noqa: F401
 from pydantic import StrictInt
-from openapi_server.models.api_v1_users_user_id_put_request import ApiV1UsersUserIdPutRequest
-from openapi_server.models.error import Error
-from openapi_server.models.user import User
-from openapi_server.models.user_update import UserUpdate
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_users_user_id_put_request import ApiV1UsersUserIdPutRequest
+from src.app.schema.error import Error
+from src.app.schema.user import User
+from src.app.schema.user_update import UserUpdate
+from security_api import get_token_bearerAuth
 
 router = APIRouter()
 

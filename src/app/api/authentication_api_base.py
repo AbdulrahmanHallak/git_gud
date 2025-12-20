@@ -3,12 +3,12 @@
 from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 
 from typing import Any
-from openapi_server.models.api_v1_auth_login_post_request import ApiV1AuthLoginPostRequest
-from openapi_server.models.api_v1_auth_refresh_post_request import ApiV1AuthRefreshPostRequest
-from openapi_server.models.api_v1_auth_signup_post_request import ApiV1AuthSignupPostRequest
-from openapi_server.models.auth_response import AuthResponse
-from openapi_server.models.error import Error
-from openapi_server.models.token_response import TokenResponse
+from src.app.schema.api_v1_auth_login_post_request import ApiV1AuthLoginPostRequest
+from src.app.schema.api_v1_auth_refresh_post_request import ApiV1AuthRefreshPostRequest
+from src.app.schema.api_v1_auth_signup_post_request import ApiV1AuthSignupPostRequest
+from src.app.schema.auth_response import AuthResponse
+from src.app.schema.error import Error
+from src.app.schema.token_response import TokenResponse
 
 
 class BaseAuthenticationApi:

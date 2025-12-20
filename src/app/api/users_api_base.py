@@ -3,11 +3,11 @@
 from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 
 from pydantic import StrictInt
-from openapi_server.models.api_v1_users_user_id_put_request import ApiV1UsersUserIdPutRequest
-from openapi_server.models.error import Error
-from openapi_server.models.user import User
-from openapi_server.models.user_update import UserUpdate
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_users_user_id_put_request import ApiV1UsersUserIdPutRequest
+from src.app.schema.error import Error
+from src.app.schema.user import User
+from src.app.schema.user_update import UserUpdate
+from security_api import get_token_bearerAuth
 
 class BaseUsersApi:
     subclasses: ClassVar[Tuple] = ()

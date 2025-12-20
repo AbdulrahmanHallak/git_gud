@@ -4,7 +4,7 @@ from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
 
-from openapi_server.apis.split_types_api_base import BaseSplitTypesApi
+from split_types_api_base import BaseSplitTypesApi
 import openapi_server.impl
 
 from fastapi import (  # noqa: F401
@@ -22,12 +22,12 @@ from fastapi import (  # noqa: F401
     status,
 )
 
-from openapi_server.models.extra_models import TokenModel  # noqa: F401
+from src.app.schema.extra_models import TokenModel  # noqa: F401
 from pydantic import StrictStr
-from openapi_server.models.api_v1_splits_get200_response import ApiV1SplitsGet200Response
-from openapi_server.models.error import Error
-from openapi_server.models.split_detail import SplitDetail
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_splits_get200_response import ApiV1SplitsGet200Response
+from src.app.schema.error import Error
+from src.app.schema.split_detail import SplitDetail
+from security_api import get_token_bearerAuth
 
 router = APIRouter()
 

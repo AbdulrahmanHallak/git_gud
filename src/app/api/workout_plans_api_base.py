@@ -4,12 +4,12 @@ from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 
 from pydantic import StrictInt, StrictStr, field_validator
 from typing import Any, Optional
-from openapi_server.models.api_v1_users_user_id_plans_post_request import ApiV1UsersUserIdPlansPostRequest
-from openapi_server.models.error import Error
-from openapi_server.models.plan_detail import PlanDetail
-from openapi_server.models.plan_summary import PlanSummary
-from openapi_server.models.plans_list import PlansList
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_users_user_id_plans_post_request import ApiV1UsersUserIdPlansPostRequest
+from src.app.schema.error import Error
+from src.app.schema.plan_detail import PlanDetail
+from src.app.schema.plan_summary import PlanSummary
+from src.app.schema.plans_list import PlansList
+from security_api import get_token_bearerAuth
 
 class BaseWorkoutPlansApi:
     subclasses: ClassVar[Tuple] = ()

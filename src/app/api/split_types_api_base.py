@@ -3,10 +3,10 @@
 from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 
 from pydantic import StrictStr
-from openapi_server.models.api_v1_splits_get200_response import ApiV1SplitsGet200Response
-from openapi_server.models.error import Error
-from openapi_server.models.split_detail import SplitDetail
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_splits_get200_response import ApiV1SplitsGet200Response
+from src.app.schema.error import Error
+from src.app.schema.split_detail import SplitDetail
+from security_api import get_token_bearerAuth
 
 class BaseSplitTypesApi:
     subclasses: ClassVar[Tuple] = ()

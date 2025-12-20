@@ -4,7 +4,7 @@ from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
 
-from openapi_server.apis.workout_sessions_api_base import BaseWorkoutSessionsApi
+from workout_sessions_api_base import BaseWorkoutSessionsApi
 import openapi_server.impl
 
 from fastapi import (  # noqa: F401
@@ -22,12 +22,12 @@ from fastapi import (  # noqa: F401
     status,
 )
 
-from openapi_server.models.extra_models import TokenModel  # noqa: F401
+from src.app.schema.extra_models import TokenModel  # noqa: F401
 from pydantic import StrictInt, StrictStr
-from openapi_server.models.api_v1_users_user_id_plans_plan_id_exercises_exercise_id_patch_request import ApiV1UsersUserIdPlansPlanIdExercisesExerciseIdPatchRequest
-from openapi_server.models.error import Error
-from openapi_server.models.exercise_log import ExerciseLog
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_users_user_id_plans_plan_id_exercises_exercise_id_patch_request import ApiV1UsersUserIdPlansPlanIdExercisesExerciseIdPatchRequest
+from src.app.schema.error import Error
+from src.app.schema.exercise_log import ExerciseLog
+from security_api import get_token_bearerAuth
 
 router = APIRouter()
 

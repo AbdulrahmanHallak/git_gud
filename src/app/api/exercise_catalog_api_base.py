@@ -2,10 +2,10 @@ from typing import ClassVar, Dict, List, Tuple
 
 from pydantic import StrictInt, StrictStr, field_validator
 from typing import Any, Optional
-from openapi_server.models.error import Error
-from openapi_server.models.exercise_detail import ExerciseDetail
-from openapi_server.models.exercise_list import ExerciseList
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.error import Error
+from src.app.schema.exercise_detail import ExerciseDetail
+from src.app.schema.exercise_list import ExerciseList
+from security_api import get_token_bearerAuth
 
 class BaseExerciseCatalogApi:
     subclasses: ClassVar[Tuple] = ()

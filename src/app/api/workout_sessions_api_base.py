@@ -3,10 +3,10 @@
 from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 
 from pydantic import StrictInt, StrictStr
-from openapi_server.models.api_v1_users_user_id_plans_plan_id_exercises_exercise_id_patch_request import ApiV1UsersUserIdPlansPlanIdExercisesExerciseIdPatchRequest
-from openapi_server.models.error import Error
-from openapi_server.models.exercise_log import ExerciseLog
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.api_v1_users_user_id_plans_plan_id_exercises_exercise_id_patch_request import ApiV1UsersUserIdPlansPlanIdExercisesExerciseIdPatchRequest
+from src.app.schema.error import Error
+from src.app.schema.exercise_log import ExerciseLog
+from security_api import get_token_bearerAuth
 
 class BaseWorkoutSessionsApi:
     subclasses: ClassVar[Tuple] = ()

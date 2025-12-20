@@ -4,7 +4,7 @@ from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
 
-from openapi_server.apis.authentication_api_base import BaseAuthenticationApi
+from authentication_api_base import BaseAuthenticationApi
 import openapi_server.impl
 
 from fastapi import (  # noqa: F401
@@ -22,14 +22,14 @@ from fastapi import (  # noqa: F401
     status,
 )
 
-from openapi_server.models.extra_models import TokenModel  # noqa: F401
+from src.app.schema.extra_models import TokenModel  # noqa: F401
 from typing import Any
-from openapi_server.models.api_v1_auth_login_post_request import ApiV1AuthLoginPostRequest
-from openapi_server.models.api_v1_auth_refresh_post_request import ApiV1AuthRefreshPostRequest
-from openapi_server.models.api_v1_auth_signup_post_request import ApiV1AuthSignupPostRequest
-from openapi_server.models.auth_response import AuthResponse
-from openapi_server.models.error import Error
-from openapi_server.models.token_response import TokenResponse
+from src.app.schema.api_v1_auth_login_post_request import ApiV1AuthLoginPostRequest
+from src.app.schema.api_v1_auth_refresh_post_request import ApiV1AuthRefreshPostRequest
+from src.app.schema.api_v1_auth_signup_post_request import ApiV1AuthSignupPostRequest
+from src.app.schema.auth_response import AuthResponse
+from src.app.schema.error import Error
+from src.app.schema.token_response import TokenResponse
 
 
 router = APIRouter()

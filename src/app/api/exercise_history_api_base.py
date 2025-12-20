@@ -5,10 +5,10 @@ from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 from datetime import date
 from pydantic import StrictInt, StrictStr
 from typing import Optional
-from openapi_server.models.error import Error
-from openapi_server.models.exercise_history import ExerciseHistory
-from openapi_server.models.exercise_progress import ExerciseProgress
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.error import Error
+from src.app.schema.exercise_history import ExerciseHistory
+from src.app.schema.exercise_progress import ExerciseProgress
+from security_api import get_token_bearerAuth
 
 class BaseExerciseHistoryApi:
     subclasses: ClassVar[Tuple] = ()

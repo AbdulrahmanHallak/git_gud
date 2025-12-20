@@ -4,7 +4,7 @@ from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
 
-from openapi_server.apis.exercise_history_api_base import BaseExerciseHistoryApi
+from exercise_history_api_base import BaseExerciseHistoryApi
 import openapi_server.impl
 
 from fastapi import (  # noqa: F401
@@ -22,14 +22,14 @@ from fastapi import (  # noqa: F401
     status,
 )
 
-from openapi_server.models.extra_models import TokenModel  # noqa: F401
+from src.app.schema.extra_models import TokenModel  # noqa: F401
 from datetime import date
 from pydantic import StrictInt, StrictStr
 from typing import Optional
-from openapi_server.models.error import Error
-from openapi_server.models.exercise_history import ExerciseHistory
-from openapi_server.models.exercise_progress import ExerciseProgress
-from openapi_server.security_api import get_token_bearerAuth
+from src.app.schema.error import Error
+from src.app.schema.exercise_history import ExerciseHistory
+from src.app.schema.exercise_progress import ExerciseProgress
+from security_api import get_token_bearerAuth
 
 router = APIRouter()
 

@@ -6,8 +6,22 @@ from sqlalchemy import pool
 from alembic import context
 # For specific components
 from sqlmodel import SQLModel, Field, Session, create_engine, select
-
-# this is the Alembic Config object, which provides
+from app.db import engine
+from app.models import (
+    User,
+    Plan,
+    Biometric,
+    Exercise,
+    PlanExercise,
+    WorkoutLog,
+    Split,
+    SplitDay,
+    ExerciseMuscleTarget,
+    Muscle,
+    MuscleMusclePart,
+    MusclePart,
+    MusclePartSplitDay,
+)# this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
@@ -51,6 +65,9 @@ def run_migrations_offline() -> None:
     with context.begin_transaction():
         context.run_migrations()
 
+        
+connectable = engine
+
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
@@ -72,6 +89,7 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
+
 
 
 if context.is_offline_mode():

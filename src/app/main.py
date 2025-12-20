@@ -1,6 +1,6 @@
-import sqlmodel
 from fastapi import FastAPI
-from src.main.api import item_router
-from sqlmodel import SQLModel
+from src.app.admin_setup import init_admin
+
 app = FastAPI()
-app.include_router(item_router)
+# app.include_router(item_router)
+init_admin(app)

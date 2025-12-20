@@ -1,13 +1,15 @@
-
+# PlanExercise.py
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional ,TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from src.app.models.Plan import Plan
     from src.app.models.SplitDay import SplitDay
     from src.app.models.Exercise import Exercise
 
+
 class PlanExercise(SQLModel, table=True):
-    __tablename__ = "plan_exercises"
+    __tablename__ = "plan_exercises"  # type: ignore
 
     id: int = Field(default_factory=int, primary_key=True)
     plan_id: int = Field(foreign_key="plans.id")

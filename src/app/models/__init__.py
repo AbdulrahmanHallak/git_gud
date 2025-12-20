@@ -7,9 +7,7 @@ from .WorkoutLog import WorkoutLog
 from .SplitDay import SplitDay
 from .ExerciseMuscleTarget import ExerciseMuscleTarget
 from .Muscle import Muscle
-from .MuscleMusclePart import MuscleMusclePart
 from .MusclePart import MusclePart
 from .MusclePartSplitDay import MusclePartSplitDay
+from .MuscleMusclePart import MuscleMusclePart  # Add this line
 from .Split import Split
-from .SplitDay import SplitDay
-# add any other models here

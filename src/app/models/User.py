@@ -1,12 +1,14 @@
 from datetime import date, datetime
-from typing import Optional, List , TYPE_CHECKING
+from typing import Optional, List, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
+
 if TYPE_CHECKING:
     from src.app.models.Biometric import Biometric
     from src.app.models.Plan import Plan
-from sqlmodel import SQLModel, Field, Relationship
+
 
 class User(SQLModel, table=True):
-    __tablename__ = "users"
+    __tablename__ = "users"  # type: ignore
 
     id: int = Field(default_factory=int, primary_key=True)
     email: str = Field(index=True, unique=True, nullable=False)

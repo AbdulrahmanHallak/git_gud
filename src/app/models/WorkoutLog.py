@@ -1,9 +1,10 @@
 from datetime import datetime
 from sqlmodel import SQLModel, Field
-from typing import Optional 
+from typing import Optional
+
 
 class WorkoutLog(SQLModel, table=True):
-    __tablename__ = "workout_logs"
+    __tablename__ = "workout_logs"  # type: ignore
 
     id: int = Field(default_factory=int, primary_key=True)
     user_id: int = Field(foreign_key="users.id")

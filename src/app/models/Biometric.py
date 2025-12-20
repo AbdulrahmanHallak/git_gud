@@ -1,15 +1,18 @@
-from datetime import  datetime
+from datetime import datetime
 
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from src.app.models.User import User
     from src.app.models.Plan import Plan
+
+
 class Biometric(SQLModel, table=True):
-    __tablename__ = "biometrics"
+    __tablename__ = "biometrics"  # type: ignore
 
     id: int = Field(primary_key=True)
-    
+
     user_id: int = Field(foreign_key="users.id", nullable=False)
     plan_id: int = Field(foreign_key="plans.id", nullable=False)
 

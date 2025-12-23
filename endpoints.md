@@ -125,18 +125,13 @@ Response: {
   "plans": [
     {
       "id": "string",
-      "splitType": "string",
+      "splitName": "string",
       "workoutType": "string",
       "daysPerWeek": "number",
       "startDate": "date",
       "endDate": "date",
       "status": "string",
       "createdAt": "datetime"
-      "logs": [
-        {
-          sets and etc blah blah
-        }
-      ]
     }
   ],
   "total": "number"
